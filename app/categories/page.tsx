@@ -43,7 +43,7 @@ export default function CategoriesPage() {
         </div>
         <button
           onClick={() => setIsAdding(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-medium transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors"
         >
           <Plus className="w-4 h-4" />
           Add Category
@@ -64,7 +64,7 @@ export default function CategoriesPage() {
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               placeholder="Category Name"
-              className="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
               autoFocus
               onKeyDown={(e) => e.key === "Enter" && handleAdd()}
             />
@@ -91,7 +91,7 @@ export default function CategoriesPage() {
                   type="text"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                   autoFocus
                   onKeyDown={(e) => e.key === "Enter" && saveEdit()}
                 />

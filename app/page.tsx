@@ -91,7 +91,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl">
           <div className="flex items-center gap-3 text-zinc-400 mb-2">
-            <Clock className="w-5 h-5 text-indigo-400" />
+            <Clock className="w-5 h-5 text-orange-400" />
             <span className="font-medium">Current Tracked</span>
           </div>
           <div className="text-4xl font-light text-white">
@@ -178,7 +178,7 @@ export default function Dashboard() {
                     cursor={{ fill: '#27272a', opacity: 0.4 }}
                   />
                   <Legend />
-                  <Bar dataKey="Current" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Current" fill="#f97316" radius={[4, 4, 0, 0]} />
                   <Bar dataKey="Ideal" fill="#14b8a6" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -198,7 +198,7 @@ export default function Dashboard() {
             {stats.insights.map((insight, i) => (
               <div key={i} className="p-4 bg-zinc-950 border border-zinc-800 rounded-xl">
                 <div className="flex items-start gap-3">
-                  <div className={`mt-1 ${insight.type === 'warning' ? 'text-rose-400' : 'text-indigo-400'}`}>
+                  <div className={`mt-1 ${insight.type === 'warning' ? 'text-rose-400' : 'text-orange-400'}`}>
                     <AlertCircle className="w-5 h-5" />
                   </div>
                   <div>
