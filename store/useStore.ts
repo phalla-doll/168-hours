@@ -42,6 +42,8 @@ interface AppState {
   deleteCategory: (id: string) => void;
   updateCurrentBlock: (day: number, hour: number, categoryId: string | null) => void;
   updateIdealBlock: (day: number, hour: number, categoryId: string | null) => void;
+  updateCurrentBlocks: (blocks: { day: number; hour: number }[], categoryId: string | null) => void;
+  updateIdealBlocks: (blocks: { day: number; hour: number }[], categoryId: string | null) => void;
   clearCurrentWeek: () => void;
   clearIdealWeek: () => void;
 }
@@ -92,6 +94,26 @@ export const useStore = create<AppState>()(
             b.day === day && b.hour === hour ? { ...b, categoryId } : b
           ),
         })),
+
+      updateCurrentBlocks: (blocks, categoryId) =>
+        set((state) => {
+          const blockSet = new Set(blocks.map(b => `${b.day}-${b.hour}`));
+          return {
+            currentWeek: state.currentWeek.map((b) =>
+              blockSet.has(`${b.day}-${b.hour}`) ? { ...b, categoryId } : b
+            ),
+          };
+        }),
+
+      updateIdealBlocks: (blocks, categoryId) =>
+        set((state) => {
+          const blockSet = new Set(blocks.map(b => `${b.day}-${b.hour}`));
+          return {
+            idealWeek: state.idealWeek.map((b) =>
+              blockSet.has(`${b.day}-${b.hour}`) ? { ...b, categoryId } : b
+            ),
+          };
+        }),
 
       clearCurrentWeek: () => set({ currentWeek: createEmptyWeek() }),
       clearIdealWeek: () => set({ idealWeek: createEmptyWeek() }),

@@ -12,37 +12,65 @@ interface PlannerGridProps {
 }
 
 export function PlannerGrid({ type }: PlannerGridProps) {
-  const { categories, currentWeek, idealWeek, updateCurrentBlock, updateIdealBlock } = useStore();
+  const { categories, currentWeek, idealWeek, updateCurrentBlocks, updateIdealBlocks } = useStore();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(categories.length > 0 ? categories[0].id : null);
-  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState<{ day: number; hour: number } | null>(null);
+  const [dragCurrent, setDragCurrent] = useState<{ day: number; hour: number } | null>(null);
 
   const weekData = type === "current" ? currentWeek : idealWeek;
-  const updateBlock = type === "current" ? updateCurrentBlock : updateIdealBlock;
+  const updateBlocks = type === "current" ? updateCurrentBlocks : updateIdealBlocks;
 
-  const handlePointerDown = (day: number, hour: number) => {
-    setIsDragging(true);
-    updateBlock(day, hour, selectedCategoryId);
+  const handlePointerDown = (day: number, hour: number, e: React.PointerEvent) => {
+    if (e.button !== 0) return; // Only left click
+    setDragStart({ day, hour });
+    setDragCurrent({ day, hour });
+    (e.target as HTMLElement).releasePointerCapture(e.pointerId);
   };
 
   const handlePointerEnter = (day: number, hour: number) => {
-    if (isDragging) {
-      updateBlock(day, hour, selectedCategoryId);
+    if (dragStart) {
+      setDragCurrent({ day, hour });
     }
   };
 
-  const handlePointerUp = () => {
-    setIsDragging(false);
-  };
+  const handlePointerUp = useCallback(() => {
+    if (dragStart && dragCurrent) {
+      const minDay = Math.min(dragStart.day, dragCurrent.day);
+      const maxDay = Math.max(dragStart.day, dragCurrent.day);
+      const minHour = Math.min(dragStart.hour, dragCurrent.hour);
+      const maxHour = Math.max(dragStart.hour, dragCurrent.hour);
+
+      const blocksToUpdate = [];
+      for (let d = minDay; d <= maxDay; d++) {
+        for (let h = minHour; h <= maxHour; h++) {
+          blocksToUpdate.push({ day: d, hour: h });
+        }
+      }
+
+      updateBlocks(blocksToUpdate, selectedCategoryId);
+    }
+    setDragStart(null);
+    setDragCurrent(null);
+  }, [dragStart, dragCurrent, updateBlocks, selectedCategoryId]);
 
   useEffect(() => {
     window.addEventListener("pointerup", handlePointerUp);
     return () => window.removeEventListener("pointerup", handlePointerUp);
-  }, []);
+  }, [handlePointerUp]);
 
   const getCategoryColor = (categoryId: string | null) => {
     if (!categoryId) return "transparent";
     const category = categories.find((c) => c.id === categoryId);
     return category ? category.color : "transparent";
+  };
+
+  const isCellInDrag = (day: number, hour: number) => {
+    if (!dragStart || !dragCurrent) return false;
+    const minDay = Math.min(dragStart.day, dragCurrent.day);
+    const maxDay = Math.max(dragStart.day, dragCurrent.day);
+    const minHour = Math.min(dragStart.hour, dragCurrent.hour);
+    const maxHour = Math.max(dragStart.hour, dragCurrent.hour);
+    return day >= minDay && day <= maxDay && hour >= minHour && hour <= maxHour;
   };
 
   return (
@@ -98,16 +126,24 @@ export function PlannerGrid({ type }: PlannerGridProps) {
                 </div>
                 {DAYS.map((_, dayIndex) => {
                   const block = weekData.find((b) => b.day === dayIndex && b.hour === hour);
+                  const isHighlighted = isCellInDrag(dayIndex, hour);
                   const color = getCategoryColor(block?.categoryId || null);
+                  const highlightColor = getCategoryColor(selectedCategoryId);
                   
                   return (
                     <div
                       key={`${dayIndex}-${hour}`}
-                      className="h-10 rounded-sm border border-zinc-800/50 transition-colors cursor-crosshair"
+                      className={cn(
+                        "h-10 rounded-sm border transition-colors cursor-crosshair",
+                        isHighlighted ? "border-white/50 z-10 relative shadow-[0_0_10px_rgba(255,255,255,0.2)]" : "border-zinc-800/50"
+                      )}
                       style={{
-                        backgroundColor: color === "transparent" ? "rgba(39, 39, 42, 0.3)" : color,
+                        backgroundColor: isHighlighted 
+                          ? (highlightColor === "transparent" ? "rgba(39, 39, 42, 0.8)" : highlightColor)
+                          : (color === "transparent" ? "rgba(39, 39, 42, 0.3)" : color),
+                        opacity: isHighlighted ? 0.8 : 1,
                       }}
-                      onPointerDown={() => handlePointerDown(dayIndex, hour)}
+                      onPointerDown={(e) => handlePointerDown(dayIndex, hour, e)}
                       onPointerEnter={() => handlePointerEnter(dayIndex, hour)}
                     />
                   );
