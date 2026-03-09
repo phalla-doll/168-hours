@@ -3,15 +3,15 @@
 import { PlannerGrid } from "@/components/PlannerGrid";
 import { useStore } from "@/store/useStore";
 
-export default function CurrentWeekPage() {
+export function CurrentWeekView() {
   const { clearCurrentWeek } = useStore();
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Current Week</h1>
-          <p className="text-zinc-400 mt-2">How you actually spend your 168 hours.</p>
+          <h2 className="text-2xl font-bold text-white tracking-tight">Current Week</h2>
+          <p className="text-zinc-400 mt-1">How you actually spend your 168 hours.</p>
         </div>
         <button
           onClick={clearCurrentWeek}

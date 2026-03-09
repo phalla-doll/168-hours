@@ -4,11 +4,11 @@ import { useState } from "react";
 import { useStore } from "@/store/useStore";
 import { Plus, Trash2, Edit2, X, Check } from "lucide-react";
 
-export default function CategoriesPage() {
+export function CategoriesView() {
   const { categories, addCategory, updateCategory, deleteCategory } = useStore();
   const [isAdding, setIsAdding] = useState(false);
   const [newName, setNewName] = useState("");
-  const [newColor, setNewColor] = useState("#3b82f6");
+  const [newColor, setNewColor] = useState("#f97316");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [editColor, setEditColor] = useState("");
@@ -35,11 +35,11 @@ export default function CategoriesPage() {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
+    <div className="space-y-6 max-w-4xl mx-auto">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Categories</h1>
-          <p className="text-zinc-400 mt-2">Manage how you classify your time.</p>
+          <h2 className="text-2xl font-bold text-white tracking-tight">Categories</h2>
+          <p className="text-zinc-400 mt-1">Manage how you classify your time.</p>
         </div>
         <button
           onClick={() => setIsAdding(true)}
